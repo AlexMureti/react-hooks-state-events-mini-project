@@ -1,44 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
+import TaskList from "./TaskList";
 import CategoryFilter from "./CategoryFilter";
 import NewTaskForm from "./NewTaskForm";
-import TaskList from "./TaskList";
-
 import { CATEGORIES, TASKS } from "../data";
-console.log("Here's the data you're working with");
-console.log({ CATEGORIES, TASKS });
 
 function App() {
-  const [tasks, setTasks] = React.useState(TASKS);
-  const [selectedCategory, setSelectedCategory] = React.useState("All");
+  const [tasks, setTasks] = useState(TASKS);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  function onCategoryChange(selectedCategory) {
-    setSelectedCategory(selectedCategory);
+  // DELETE task
+  function handleDeleteTask(taskText) {
+    const updatedTasks = tasks.filter(task => task.text !== taskText);
+    setTasks(updatedTasks);
   }
 
-  function onTaskFormSubmit(newTask) {
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+  // ADD new task
+  function handleAddTask(newTask) {
+    setTasks([...tasks, newTask]);
   }
-  function handleDeleteTask(taskId) {
-    console.log("Deleting task with id:", taskId);
 
-  const filteredTasks = tasks.filter((task) =>
-      selectedCategory === "All" ? true : task.category === selectedCategory
-    );
-  }
+  // FILTER tasks
+  const filteredTasks = tasks.filter(task =>
+    selectedCategory === "All" ? true : task.category === selectedCategory
+  );
+
   return (
     <div className="App">
       <h2>My tasks</h2>
-\      <CategoryFilter 
+      <CategoryFilter
         categories={CATEGORIES}
         selectedCategory={selectedCategory}
-        onCategoryClick={onCategoryChange}
-/>
-      <NewTaskForm 
-        categories={CATEGORIES}
-        onTaskFormSubmit={onTaskFormSubmit}
+        onSelectCategory={setSelectedCategory}
       />
+      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={handleAddTask} />
       <TaskList tasks={filteredTasks} onDeleteTask={handleDeleteTask} />
-
     </div>
   );
 }
